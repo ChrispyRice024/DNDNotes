@@ -5,58 +5,149 @@ const fs = require('fs')
 export default function WorkPad ({functions}) {
 
     // Passing down functions
-    const {fullData, setFullData} = functions
+    const {fullData, setFullData, getNoteData} = functions
+    
+    const [DBChange, setDBChange] = useState(false)
 
-    //holding the individual notes until submit
     const [noteData, setNoteData] = useState({
         id: Date.now(),
         name:'',
         note:'',
         category:''
-    })
+      })
 
-    //Setting the data to noteData
     const handleChange = (e) => {
-        e.preventDefault()
+    e.preventDefault()
 
-        setNoteData(prevData => ({
-            ...prevData,
-            [e.target.name]: e.target.value
-        }))
+    setNoteData(prevData => ({
+        ...prevData,
+        [e.target.name]: e.target.value
+    }))
 
-        console.log(noteData)
+    console.log(noteData)
     }
 
-    // Setting the noteData at the end of fullData
 
-    const handleSubmit = async (e) => {
+
+    useEffect(() => {
+        getNoteData(noteData)
+    }, [])
+
+    useEffect(() => {
+        console.log('fullData-WorkPad initial', fullData)
+    })
+    useEffect(() => {
+        console.log('fullData-WorkPad', fullData)
+    }, [fullData])
+
+    const handleSubmit =  (e) => {
         e.preventDefault()
+      
+        // setFullData(prevData => [...prevData, noteData])
 
-        if(fullData && fullData.length === 0){
-            setFullData([noteData])
-            // await saveData([noteData])
+        console.log('right after fullData is set in handleSubmit', fullData)
+        
+        // const saveFile = async () => {
+      
+        //   try{
+        //       const stringData = JSON.stringify(fullData)
+        //       console.log('|fullData|', fullData)
+      
+        //       fs.writeFile('./save.json', stringData, (err) => {
+        //           if(err){
+        //               console.log('try', err)
+        //           }else{
+        //           console.log('successful writeFile', fullData)
+      
+        //           // console.log(save.json)
+        //           }
+        //   })
+        //   }catch(err){
+        //       console.error('catch', err)
+        //   }
+        // }
+      
+        // const saveFile = async () => {
 
-        }else if(fullData && fullData.length > 0){
-            setFullData( prevData => [...prevData, noteData])
-            // await saveData(fullData.concat(noteData))
+        //     let jsonData
 
+        //     try{
+
+        //         const data = fs.readFile('./save.json', 'utf8', (err) => {
+        //             if(err){
+        //                 console.log('readFile', err)
+        //             }else{
+        //                 console.log('data-else-try', data)
+        //                 jsonData = JSON.parse(data)
+        //                 console.log('success')
+                        
+        //                 jsonData.push(noteData)
+        //             }
+        //         })
+        //         const stringData = JSON.stringify(jsonData)
+
+                
+        //         console.log('stringData', stringData)
+                
+        //         fs.writeFile('./save.json', stringData, (err) => {
+        //             if(err){
+        //                 console.log('writeFile', err)
+        //             }else{
+        //                 console.log('success')
+        //             }
+        //         })
+        //     }catch(err){
+        //         console.log('catch', err)
+        // }}
+
+        const saveFile = () => {
+
+            fs.readFile('./save.json', 'utf8', (err, data) => {
+                if(err){
+                    console.log('saveFile-if', err)
+                
+                }else if(data === '' || data.length === 0){
+
+                    const noteArray = [noteData]
+                    const noteArrayString = JSON.stringify(noteArray)
+
+                    fs.writeFile('./save.json', noteArrayString, (err) => {
+                        if(err){
+                            console.log(err)
+                        }else{
+                            console.log('success')
+                        }
+                        })
+                    window.location.reload()
+                }else{
+                    console.log('data-else', data)
+                    const jsonData = JSON.parse(data)
+
+                    jsonData.push(noteData)
+
+                    const stringData = JSON.stringify(jsonData)
+                    console.log('stringData', stringData)
+
+                    fs.writeFile('./save.json', stringData, (err) => {
+                        if(err){
+                            console.log(err)
+                        }else{
+                            console.log('success')
+                        }
+                    })
+                    window.location.reload()
+                }
+
+                }
+            )
         }
-
-            const stringData = fullData.length > 0  ? JSON.stringify(fullData) : '[]'
-            await fs.promises.writeFile('./save.json', stringData)
-            // alert('success')
+        saveFile()
+        console.log('after saveFile is run in handleSubmit', fullData)
+      
             // window.location.reload()
       
-    }
+      } 
 
-
-
-
-        // 
-    
-useEffect(() => {
-    console.log(fullData)
-}, [fullData])
     return(
         <div>
             <form id='newNote'>
@@ -75,7 +166,8 @@ useEffect(() => {
                 {/* Note */}
                 <textarea onChange={handleChange} name='note' id="details" rows="4" cols="50" form="new-note"></textarea>
                 {/* Submit */}
-                <input type='submit' onSubmit={handleSubmit} value='submit' />
+                {/* <input type='submit' onSubmit={handleSubmit} value='submit' /> */}
+                <button onClick={handleSubmit}>Click</button>
                 {/* <input id="submit" onChange={handleSubmit} type="submit" value="Save Entry"/> */}
             </form>
         </div>

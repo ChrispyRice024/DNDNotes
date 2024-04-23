@@ -3,12 +3,12 @@ import {useState, useEffect} from 'react'
 const fs = require('fs')
 
 export default function Notes ({functions}) {
-    const {fullData, setFullData} = functions
+    const {fullData, setFullData, setLoading} = functions
 
     const [noteData, setNoteData] = useState([])
 
     const handleDelete = (idToDelete) => {
-        const updatedData = fullData.filter(note => note.id !== idToDelete)
+        const updatedData = fullData.filter(note => note.id === idToDelete)
 
         setFullData(updatedData)
 
@@ -16,7 +16,7 @@ export default function Notes ({functions}) {
 
         try{
             
-            fs.appendFile('./save.json', stringData, function(err){
+            fs.writeFile('./save.json', stringData, function(err){
                         if(!err){
                             console.log('Success')
                         }else{
@@ -27,8 +27,34 @@ export default function Notes ({functions}) {
         }catch(err){
             console.error('error: append file:',err)
         }
-        window.location.reload()
+        // window.location.reload()
     }
+
+    useEffect(()  => {
+
+        const fetchData = async () => {
+    
+          try{
+            const data = await fs.promises.readFile('./save.json', 'utf8')
+            const jsonData = JSON.parse(data)
+    
+            setFullData(jsonData)
+    
+            console.log('fullData', fullData)
+    
+          }catch(err){
+            console.error(err)
+    
+          }finally{
+            console.log('fullData, finally', fullData)
+
+          }
+          console.log('fullData- end of fetch function', fullData)
+        }
+        fetchData()
+        //this logs an empty array, but other logs on other pages(another child to this childs parent)logs the correct updated data
+        console.log('fullData- after fetchData runs', fullData)
+      }, [])
 
     return(
         <div>

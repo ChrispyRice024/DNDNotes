@@ -7,51 +7,48 @@ function App() {
 
   const [fullData, setFullData] = useState([])
 
+  const [loading, setLoading] = useState(true)
+
   const [shouldReload, setShouldReload] = useState(false)
 
-//   useEffect(() => {
-//     const saveData = async () => {
-//         try{
-//             const stringData = fullData.length > 0  ? JSON.stringify(fullData) : []
-//             await fs.promises.writeFile('./save.json', stringData)
+  const [didSubmit, setDidSubmit] = useState(false)
 
-   
-//         }catch(err){
-//             console.error('Error saving data to save.json:', err);
+  const [noteData, setNoteData] = useState({})
 
-//         }
-//         // window.location.reload()
-//     }
-//   saveData()
-// }, [fullData])
+  const getNoteData = (data) => {
+    setNoteData(data)
+    console.log(noteData)
+  }
 
   useEffect(() => {
+    setLoading(false)
+  }, [fullData])
 
-    fs.readFile('./save.json', 'utf8', function (err, data) {
-      try{
-        const jsonData = JSON.parse(data)
-        setFullData(jsonData)
-      console.log(jsonData)
-      }catch(err){
-        console.error(err)
-      }
-    })
 
-    if(fullData && fullData.length === 0){
-      console.log(true)
-    }else{
-      console.log(false)
-    }
-  }, [])
+
+
   
+  // useEffect(() => {
+  //   setLoading(false)
+  //   console.log('fullData', fullData)
+  //   console.log('loading', loading)
+  // }, [fullData])
+
   return (
     <div className="App">
-      <div>
-        <WorkPad functions={{fullData, setFullData}} />
-      </div>
-      <div>
-        <Notes functions={{fullData, setFullData}} />
-      </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+      <>
+        <div>
+          <WorkPad functions={{fullData, setFullData, getNoteData}} />
+        </div>
+        <div>
+          <Notes functions={{fullData, setFullData, setLoading}} />
+        </div>
+      </>
+      )}
+
     </div>
   );
 }
