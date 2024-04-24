@@ -1,83 +1,118 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from "react";
+import Search from './Search'
+const fs = require("fs");
 
-const fs = require('fs')
+export default function Notes() {
+  const [fullData, setFullData] = useState([]);
 
-export default function Notes ({functions}) {
-    const {fullData, setFullData, setLoading} = functions
+  const [searchData, setSearchData] = useState([])
 
-    const [noteData, setNoteData] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
 
-    const handleDelete = (idToDelete) => {
-        const updatedData = fullData.filter(note => note.id === idToDelete)
+  const [tags, setTags] = useState([])
+  const [catSearch, setCatSearch] = useState()
+  const [nameSearch, setNameSearch] = useState()
+  console.log(tags, catSearch, nameSearch)
 
-        setFullData(updatedData)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fs.readFile("./save.json", "utf8", (err, data) => {
+          const jsonData = JSON.parse(data);
+          setFullData(jsonData);
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        console.log("fullData, finally", fullData);
+      }
+    };
+    fetchData();
+  }, []);
 
-        const stringData = fullData.length > 0  ? JSON.stringify(fullData) : ''
 
-        try{
-            
-            fs.writeFile('./save.json', stringData, function(err){
-                        if(!err){
-                            console.log('Success')
-                        }else{
-                            console.error('error line 44 workPad.js' , err)
-                        }
-                    })
+  const handleSearch = (e) => {
+    e.preventDefault()
 
-        }catch(err){
-            console.error('error: append file:',err)
-        }
-        // window.location.reload()
+    var results = fullData.filter((el) => {
+        console.log(el)
+        const tagMatch = tags.length === 0 || (el.note && tags.some(tag => el.note.includes(tag)))
+        console.log(el, tagMatch)
+
+        const nameMatch = nameSearch.length === 0 || (el.name && nameSearch.some(nameSplit => el.name.toLowerCase().includes(nameSplit.toLowerCase())))
+        // const nameMatch = !nameSearch || el.name.toLowerCase().includes(nameSearch.toLowerCase())
+        console.log(nameMatch, el)
+
+        const catMatch = catSearch === undefined || (el.category && catSearch === el.category)
+
+        return tagMatch && catMatch && nameMatch;
+    })
+    console.log(results)
+    setIsSearching(true)
+    setSearchData(results)
+  }
+
+console.log(handleSearch)
+  const handleDelete = (idToDelete) => {
+    if (fullData.length === 1) {
+      setFullData([]);
     }
+    const updatedData =
+      fullData.length > 1
+        ? fullData.filter((note) => note.id !== idToDelete)
+        : [];
+    console.log(updatedData);
 
-    useEffect(()  => {
-
-        const fetchData = async () => {
-    
-          try{
-            const data = await fs.promises.readFile('./save.json', 'utf8')
-            const jsonData = JSON.parse(data)
-    
-            setFullData(jsonData)
-    
-            console.log('fullData', fullData)
-    
-          }catch(err){
-            console.error(err)
-    
-          }finally{
-            console.log('fullData, finally', fullData)
-
-          }
-          console.log('fullData- end of fetch function', fullData)
+    const stringData = JSON.stringify(updatedData);
+    console.log(stringData);
+    try {
+      fs.writeFile("./save.json", stringData, function (err) {
+        if (!err) {
+          console.log("Success");
+        } else {
+          console.error("error line 44 workPad.js", err);
         }
-        fetchData()
-        //this logs an empty array, but other logs on other pages(another child to this childs parent)logs the correct updated data
-        console.log('fullData- after fetchData runs', fullData)
-      }, [])
-
-    return(
+      });
+      window.location.reload();
+    } catch (err) {
+      console.error("error: append file:", err);
+    }
+  };
+console.log(isSearching)
+  return (
+    <div>
         <div>
-            {
-                fullData && fullData.length > 1 && Object.keys(fullData[0]).length !== 0 ? 
-                fullData.map(note => 
-                    <div id='singleNote'>
-                        <p>
-                            {note.category}
-                        </p>
-                        <p>
-                            {note.name}
-                        </p>
-                        <p>
-                            {note.note}
-                        </p>
+          <Search functions={{setTags, setCatSearch, setNameSearch, setIsSearching, handleSearch}} />
+        </div>
+
+        <div>
+            {isSearching 
+                ? (searchData.map((note) => (
+                    <div key={note.id} id='singleNote'>
+                        <p>{note.category}</p>
+                        <p>{note.name}</p>
+                        <p>{note.note}</p>
                         <p>
                             <button onClick={() => handleDelete(note.id)}>Delete</button>
                         </p>
                     </div>
-                    )
-                : ''
+)
+                )) : 
+
+                fullData && fullData.length >= 1 && Object.keys(fullData[0]).length !== 0
+                    ? (fullData.map((note) => (
+                        <div key={note.id} id="singleNote">
+                        <p>{note.category}</p>
+                        <p>{note.name}</p>
+                        <p>{note.note}</p>
+                        <p>
+                            <button onClick={() => handleDelete(note.id)}>Delete</button>
+                        </p>
+                        </div>
+                    ))) : null
+
             }
         </div>
-    )
+    </div>
+  );
 }
