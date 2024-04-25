@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Search from './Search'
 import EditEntry from './EditEntry'
 const fs = require("fs");
@@ -12,8 +12,28 @@ export default function Notes() {
     const fetchData = async () => {
       try {
         const data = await fs.readFile("./save.json", "utf8", (err, data) => {
+
           const jsonData = JSON.parse(data);
+          
+          const addBreaks = () => {
+
+            return jsonData.map((item, index) => {
+                const noteWithBreaks = item.note.replace(/\n/g, '<br>')
+                return (
+                    <div key={index}  />
+                )
+            })
+            for(let i=0; i < jsonData.length; i++){
+
+                let note = jsonData[i].note
+
+                note = note.replace(/\n\n/g, '<br>')
+                console.log(jsonData[i])
+            }  
+          }
+          addBreaks()
           setFullData(jsonData);
+
         });
       } catch (err) {
         console.error(err);
@@ -29,8 +49,8 @@ export default function Notes() {
   const [searchData, setSearchData] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [tags, setTags] = useState([])
-  const [catSearch, setCatSearch] = useState()
-  const [nameSearch, setNameSearch] = useState()
+  const [catSearch, setCatSearch] = useState([])
+  const [nameSearch, setNameSearch] = useState([])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -58,6 +78,10 @@ export default function Notes() {
   const [toChange, setToChange] = useState({})
   const [isEdit, setIsEdit] = useState(false)
 
+  const detailsRef = useRef(null)
+  const nameRef = useRef(null)
+  const catRef = useRef(null)
+
   const handleEdit = (noteToChange, e) => {
     e.preventDefault()
 
@@ -75,18 +99,56 @@ export default function Notes() {
     }) )
   }
 
-  const confirmChange = (note, e) => {
+  const confirmChange = async (note, e) => {
     e.preventDefault()
-    setFullData(prevData => prevData.map(item => {
-        if(item=== note){
-            return{
-                ...item,
-                ...toChange
+
+
+    try{
+        const data = await fs.promises.readFile('./save.json', 'utf8')
+        const jsonData = JSON.parse(data)
+
+        jsonData.forEach((jsonNote) => {
+
+            if(jsonNote.id === note.id){
+                jsonNote.name = nameRef.current.value
+                jsonNote.note = detailsRef.current.value
+                jsonNote.category = catRef.current.value
             }
-        }
-    }))
-    console.log(note)
+        })
+
+        await fs.promises.writeFile('./save.json', JSON.stringify(jsonData), 'utf8')
+        console.log('successful update')
+        window.location.reload()
+    }catch(err){
+        console.log(err)
+    }
+
+    const updateData = () => {
+        fs.readFile('./save.json', 'utf8', (err, data) => {
+            if(err){
+                console.log(err)
+            }else{
+                const jsonData = JSON.parse(data)
+                console.log(jsonData)
+                jsonData.map((jsonNote) =>{
+                    if(jsonNote.id === note.id){
+                        // jsonNote = note
+                        console.log('note', note)
+                        console.log('jsonNote', jsonNote)
+                        console.log(e)
+                    }
+                })
+            }
+        })
+    }
+
+    updateData()
+    
   }
+
+  useEffect(() => {
+    console.log('fullData in notes', fullData)
+  })
 
   const decideDefault = (value) => {
     if (toChange.category === value){
@@ -125,7 +187,7 @@ export default function Notes() {
 
   return (
     <div>
-        <div>
+        <div id='searchParent'>
             <Search functions={{ setTags, setCatSearch, setNameSearch, setIsSearching, handleSearch }} />
         </div>
 
@@ -135,7 +197,7 @@ export default function Notes() {
                     <div key={note.id} className='singleNote'>
                         <p>{note.category}</p>
                         <p>{note.name}</p>
-                        <p>{note.note}</p>
+                        <p style={{ whiteSpace: 'pre-line' }}>{note.note}</p>
                         <p>Extra content for searched items</p>
                         <p>
                             <button onClick={() => handleDelete(note.id)}>Delete</button>
@@ -148,23 +210,25 @@ export default function Notes() {
                 fullData.map((note) => (
                     <div key={note.id} className='singleNote'>
                         {(toChange.id === note.id && isEdit) ? (
-                            <div>
+                            <span>
                                 <p>
-                                    <select name="category" onInput={handleChange} id="category">
+                                    <select name="category" onInput={handleChange} id="category" ref={catRef}>
                                         <option defaultValue={decideDefault('')} disabled hidden>
                                             Categories
                                         </option>
-                                        <option value="character" defaultValue={decideDefault('character')}>Character</option>
-                                        <option value="creature" defaultValue={decideDefault('creature')}>Creature</option>
-                                        <option value="faction" defaultValue={decideDefault('faction')}>Faction</option>
-                                        <option value="item" defaultValue={decideDefault('item')}>Item</option>
-                                        <option value="location" defaultValue={decideDefault('location')}>Location</option>
-                                        <option value="other" defaultValue={decideDefault('other')}>Other</option>
+                                        <option value="Character" defaultValue={decideDefault('Character')}>Character</option>
+                                        <option value="Creature" defaultValue={decideDefault('Creature')}>Creature</option>
+                                        <option value="Faction" defaultValue={decideDefault('Faction')}>Faction</option>
+                                        <option value="Item" defaultValue={decideDefault('Item')}>Item</option>
+                                        <option value="Location" defaultValue={decideDefault('Location')}>Location</option>
+                                        <option value="Other" defaultValue={decideDefault('Other')}>Other</option>
+                                        <option value="Quest" defaultValue={decideDefault('Quest')}>Quest</option>
                                     </select>
                                 </p>
 
                                 <p>
                                     <input
+                                        ref={nameRef}
                                         id="name"
                                         name="name"
                                         onChange={handleChange}
@@ -175,10 +239,11 @@ export default function Notes() {
 
                                 <p>
                                     <textarea
+                                        ref={detailsRef}
                                         onChange={handleChange}
                                         name="note"
                                         id="details"
-                                        rows="4"
+                                        rows="10"
                                         cols="50"
                                         form="new-note"
                                         defaultValue={toChange.note}
@@ -187,17 +252,17 @@ export default function Notes() {
                                 <p>
                                     <button onClick={(event) => confirmChange(note, event)}>Confirm</button>
                                 </p>
-                            </div>
+                            </span>
                         ) : (
-                            <>
+                            <span>
                                 <p>{note.category}</p>
                                 <p>{note.name}</p>
-                                <p>{note.note}</p>
+                                <p style={{ whiteSpace: 'pre-line' }}>{note.note}</p>
                                 <p>
                                     <button onClick={() => handleDelete(note.id)}>Delete</button>
                                     <button onClick={(event) => handleEdit(note, event)}>Edit</button>
                                 </p>
-                            </>
+                            </span>
                         )}
                     </div>
                 ))

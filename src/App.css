@@ -2,9 +2,26 @@
   text-align:center;
 
 }
-
+#new-note{
+  text-align:center;
+  /* background-color:blue */
+}
 #workPad{
-  max-width:60%;
+  max-width:100%;
   border-style:solid;
   background-color:green;
+  /* display: flex; */
+  text-align:center;
+}
+
+#searchParent{
+  
+}
+
+#search{
+  text-align:center;
+}
+
+input{
+  /* background-color:blue; */
 }

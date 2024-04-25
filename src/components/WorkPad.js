@@ -66,7 +66,7 @@ export default function WorkPad() {
               console.log("success no2");
             }
           });
-        //   window.location.reload();
+          window.location.reload();
         }
       });
     };
@@ -82,34 +82,40 @@ export default function WorkPad() {
         </h2>
       <form id="newNote">
         {/* Category */}
-        <select name="category" onInput={handleChange} id="category">
-          <option value="" disabled selected hidden>
-            Categories
-          </option>
-          <option value="character">Character</option>
-          <option value="creature">Creature</option>
-          <option value="faction">Faction</option>
-          <option value="item">Item</option>
-          <option value="location">Location</option>
-          <option value="other">Other</option>
-        </select>
-        {/* Name */}
-        <input
-          id="name"
-          name="name"
-          onChange={handleChange}
-          type="text"
-          placeholder="Name"
-        />
-        {/* Note */}
-        <textarea
-          onChange={handleChange}
-          name="note"
-          id="details"
-          rows="4"
-          cols="50"
-          form="new-note"
-        ></textarea>
+        <p>
+            <select name="category" onInput={handleChange} id="category">
+            <option value="" disabled selected hidden>
+                Categories
+            </option>
+            <option value="Character">Character</option>
+            <option value="Creature">Creature</option>
+            <option value="Faction">Faction</option>
+            <option value="Item">Item</option>
+            <option value="Location">Location</option>
+            <option value="Other">Other</option>
+            <option value="Quest">Quest</option>
+            </select>
+        
+            {/* Name */}
+            <input
+            id="name"
+            name="name"
+            onChange={handleChange}
+            type="text"
+            placeholder="Name"
+            />
+        </p>
+        <p>
+            {/* Note */}
+            <textarea
+            onChange={handleChange}
+            name="note"
+            id="details"
+            rows="10"
+            cols="50"
+            form="new-note"
+            ></textarea>
+        </p>
         {/* Submit */}
         <button onClick={handleSubmit}>New Note</button>
       </form>
