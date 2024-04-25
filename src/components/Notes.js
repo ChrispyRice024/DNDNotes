@@ -126,92 +126,82 @@ export default function Notes() {
   return (
     <div>
         <div>
-          <Search functions={{setTags, setCatSearch, setNameSearch, setIsSearching, handleSearch}} />
+            <Search functions={{ setTags, setCatSearch, setNameSearch, setIsSearching, handleSearch }} />
         </div>
 
         <div>
-            {isSearching 
-                ? (searchData.map((note) => (
-                    <div key={note.id} class='singleNote'>
-
+            {isSearching ? (
+                searchData.map((note) => (
+                    <div key={note.id} className='singleNote'>
                         <p>{note.category}</p>
                         <p>{note.name}</p>
                         <p>{note.note}</p>
-                        <p>im the extra</p>
+                        <p>Extra content for searched items</p>
                         <p>
                             <button onClick={() => handleDelete(note.id)}>Delete</button>
                             <button onClick={(event) => handleEdit(note, event)}>Edit</button>
                         </p>
                     </div>
-)
-                )) : 
+                ))
+            ) : (
+                fullData &&
+                fullData.map((note) => (
+                    <div key={note.id} className='singleNote'>
+                        {(toChange.id === note.id && isEdit) ? (
+                            <div>
+                                <p>
+                                    <select name="category" onInput={handleChange} id="category">
+                                        <option defaultValue={decideDefault('')} disabled hidden>
+                                            Categories
+                                        </option>
+                                        <option value="character" defaultValue={decideDefault('character')}>Character</option>
+                                        <option value="creature" defaultValue={decideDefault('creature')}>Creature</option>
+                                        <option value="faction" defaultValue={decideDefault('faction')}>Faction</option>
+                                        <option value="item" defaultValue={decideDefault('item')}>Item</option>
+                                        <option value="location" defaultValue={decideDefault('location')}>Location</option>
+                                        <option value="other" defaultValue={decideDefault('other')}>Other</option>
+                                    </select>
+                                </p>
 
-                (
-                    fullData && fullData.length >= 1 && Object.keys(fullData[0]).length !== 0
-                        ? (fullData.map((note) => (
-                            (toChange.id === note.id && isEdit) ?
-                            (
-                                <div key={note.id}>
-                                    {console.log(note)}
-                                    <p>
-                                        <select name="category" onInput={handleChange} id="category">
-                                            <option defaultValue={decideDefault('')} disabled hidden>
-                                                Categories
-                                            </option>
-                                            <option value="character" defaultValue={decideDefault('character')}>Character</option>
-                                            <option value="creature" defaultValue={decideDefault('creature')}>Creature</option>
-                                            <option value="faction" defaultValue={decideDefault('faction')}>Faction</option>
-                                            <option value="item" defaultValue={decideDefault('item')}>Item</option>
-                                            <option value="location" defaultValue={decideDefault('location')}>Location</option>
-                                            <option value="other" defaultValue={decideDefault('other')}>Other</option>
-                                        </select>
-                                    </p>
+                                <p>
+                                    <input
+                                        id="name"
+                                        name="name"
+                                        onChange={handleChange}
+                                        type="text"
+                                        defaultValue={toChange.name}
+                                    />
+                                </p>
 
-                                    <p>
-                                        <input
-                                            id="name"
-                                            name="name"
-                                            onChange={handleChange}
-                                            type="text"
-                                            defaultValue={toChange.name}
-                                        />
-                                    </p>
-
-                                    <p>
-                                        <textarea
-                                            onChange={handleChange}
-                                            name="note"
-                                            id="details"
-                                            rows="4"
-                                            cols="50"
-                                            form="new-note"
-                                            defaultValue={toChange.note}
-                                        ></textarea>
-                                    </p>
-                                    <p>
-                                        <button onClick={(event) => confirmChange(note, event)}>Confirm</button>
-                                    </p>
-                                </div>
-                            ) : (
-                                fullData.map((note) => (
-                                    <div key={note.id} id="singleNote">
-                                        <p>{note.category}</p>
-                                        <p>{note.name}</p>
-                                        <p>{note.note}</p>
-                                        
-                                        <p>
-                                            <button onClick={() => handleDelete(note.id)}>Delete</button>
-                                            <button onClick={(event) => handleEdit(note, event)}>Edit</button>
-                                        </p>
-                                    </div>
-                                ))
-                            ) 
-                        ))) : null
-                )
-                
-                }
-
-
+                                <p>
+                                    <textarea
+                                        onChange={handleChange}
+                                        name="note"
+                                        id="details"
+                                        rows="4"
+                                        cols="50"
+                                        form="new-note"
+                                        defaultValue={toChange.note}
+                                    ></textarea>
+                                </p>
+                                <p>
+                                    <button onClick={(event) => confirmChange(note, event)}>Confirm</button>
+                                </p>
+                            </div>
+                        ) : (
+                            <>
+                                <p>{note.category}</p>
+                                <p>{note.name}</p>
+                                <p>{note.note}</p>
+                                <p>
+                                    <button onClick={() => handleDelete(note.id)}>Delete</button>
+                                    <button onClick={(event) => handleEdit(note, event)}>Edit</button>
+                                </p>
+                            </>
+                        )}
+                    </div>
+                ))
+            )}
         </div>
     </div>
   );

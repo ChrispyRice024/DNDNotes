@@ -29,14 +29,19 @@ export default function WorkPad() {
     e.preventDefault();
 
     const saveFile = () => {
+        
       fs.readFile("./save.json", "utf8", (err, data) => {
+        
         if (err) {
           console.log("saveFile-if", err);
+        
         } else if (data === "" || data.length === 0) {
-          const noteArray = [noteData];
-          const noteArrayString = JSON.stringify(noteArray);
+        
+            const noteArray = [noteData];
+            const noteArrayString = JSON.stringify(noteArray);
 
           fs.writeFile("./save.json", noteArrayString, (err) => {
+
             if (err) {
               console.log(err);
             } else {
@@ -44,6 +49,7 @@ export default function WorkPad() {
             }
           });
           window.location.reload();
+
         } else {
           console.log("data-else", data);
           const jsonData = JSON.parse(data);
