@@ -1,18 +1,12 @@
 import { useState, useEffect } from "react";
 import Search from './Search'
+import EditEntry from './EditEntry'
 const fs = require("fs");
 
 export default function Notes() {
+
+//FULLDATA AND the LOGIC TO POPULATE IT
   const [fullData, setFullData] = useState([]);
-
-  const [searchData, setSearchData] = useState([])
-
-  const [isSearching, setIsSearching] = useState(false)
-
-  const [tags, setTags] = useState([])
-  const [catSearch, setCatSearch] = useState()
-  const [nameSearch, setNameSearch] = useState()
-  console.log(tags, catSearch, nameSearch)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +24,13 @@ export default function Notes() {
     fetchData();
   }, []);
 
+
+  //SEARCH VARIABLES AND LOGIC
+  const [searchData, setSearchData] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [tags, setTags] = useState([])
+  const [catSearch, setCatSearch] = useState()
+  const [nameSearch, setNameSearch] = useState()
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -52,7 +53,50 @@ export default function Notes() {
     setSearchData(results)
   }
 
-console.log(handleSearch)
+
+//EDIT VARIABLES AND LOGIC
+  const [toChange, setToChange] = useState({})
+  const [isEdit, setIsEdit] = useState(false)
+
+  const handleEdit = (noteToChange, e) => {
+    e.preventDefault()
+
+    console.log(noteToChange)
+    setToChange(noteToChange)
+    setIsEdit(true)
+  }
+
+  const handleChange = (e) => {
+    e.preventDefault()
+
+    setToChange(prevData =>( {
+        ...prevData,
+        [e.target.name]: e.target.value
+    }) )
+  }
+
+  const confirmChange = (note, e) => {
+    e.preventDefault()
+    setFullData(prevData => prevData.map(item => {
+        if(item=== note){
+            return{
+                ...item,
+                ...toChange
+            }
+        }
+    }))
+    console.log(note)
+  }
+
+  const decideDefault = (value) => {
+    if (toChange.category === value){
+        return true
+    }else{
+        return false
+    }
+  }
+
+//LOGIC TO DELETE
   const handleDelete = (idToDelete) => {
     if (fullData.length === 1) {
       setFullData([]);
@@ -78,7 +122,7 @@ console.log(handleSearch)
       console.error("error: append file:", err);
     }
   };
-console.log(isSearching)
+
   return (
     <div>
         <div>
@@ -88,30 +132,86 @@ console.log(isSearching)
         <div>
             {isSearching 
                 ? (searchData.map((note) => (
-                    <div key={note.id} id='singleNote'>
+                    <div key={note.id} class='singleNote'>
+
                         <p>{note.category}</p>
                         <p>{note.name}</p>
                         <p>{note.note}</p>
+                        <p>im the extra</p>
                         <p>
                             <button onClick={() => handleDelete(note.id)}>Delete</button>
+                            <button onClick={(event) => handleEdit(note, event)}>Edit</button>
                         </p>
                     </div>
 )
                 )) : 
 
-                fullData && fullData.length >= 1 && Object.keys(fullData[0]).length !== 0
-                    ? (fullData.map((note) => (
-                        <div key={note.id} id="singleNote">
-                        <p>{note.category}</p>
-                        <p>{note.name}</p>
-                        <p>{note.note}</p>
-                        <p>
-                            <button onClick={() => handleDelete(note.id)}>Delete</button>
-                        </p>
-                        </div>
-                    ))) : null
+                (
+                    fullData && fullData.length >= 1 && Object.keys(fullData[0]).length !== 0
+                        ? (fullData.map((note) => (
+                            (toChange.id === note.id && isEdit) ?
+                            (
+                                <div key={note.id}>
+                                    {console.log(note)}
+                                    <p>
+                                        <select name="category" onInput={handleChange} id="category">
+                                            <option defaultValue={decideDefault('')} disabled hidden>
+                                                Categories
+                                            </option>
+                                            <option value="character" defaultValue={decideDefault('character')}>Character</option>
+                                            <option value="creature" defaultValue={decideDefault('creature')}>Creature</option>
+                                            <option value="faction" defaultValue={decideDefault('faction')}>Faction</option>
+                                            <option value="item" defaultValue={decideDefault('item')}>Item</option>
+                                            <option value="location" defaultValue={decideDefault('location')}>Location</option>
+                                            <option value="other" defaultValue={decideDefault('other')}>Other</option>
+                                        </select>
+                                    </p>
 
-            }
+                                    <p>
+                                        <input
+                                            id="name"
+                                            name="name"
+                                            onChange={handleChange}
+                                            type="text"
+                                            defaultValue={toChange.name}
+                                        />
+                                    </p>
+
+                                    <p>
+                                        <textarea
+                                            onChange={handleChange}
+                                            name="note"
+                                            id="details"
+                                            rows="4"
+                                            cols="50"
+                                            form="new-note"
+                                            defaultValue={toChange.note}
+                                        ></textarea>
+                                    </p>
+                                    <p>
+                                        <button onClick={(event) => confirmChange(note, event)}>Confirm</button>
+                                    </p>
+                                </div>
+                            ) : (
+                                fullData.map((note) => (
+                                    <div key={note.id} id="singleNote">
+                                        <p>{note.category}</p>
+                                        <p>{note.name}</p>
+                                        <p>{note.note}</p>
+                                        
+                                        <p>
+                                            <button onClick={() => handleDelete(note.id)}>Delete</button>
+                                            <button onClick={(event) => handleEdit(note, event)}>Edit</button>
+                                        </p>
+                                    </div>
+                                ))
+                            ) 
+                        ))) : null
+                )
+                
+                }
+
+
         </div>
     </div>
   );

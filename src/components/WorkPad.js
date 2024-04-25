@@ -40,14 +40,14 @@ export default function WorkPad() {
             if (err) {
               console.log(err);
             } else {
-              console.log("success");
+              console.log("success no1");
             }
           });
           window.location.reload();
         } else {
           console.log("data-else", data);
           const jsonData = JSON.parse(data);
-
+            console.log(noteData)
           jsonData.push(noteData);
 
           const stringData = JSON.stringify(jsonData);
@@ -57,10 +57,10 @@ export default function WorkPad() {
             if (err) {
               console.log(err);
             } else {
-              console.log("success");
+              console.log("success no2");
             }
           });
-          window.location.reload();
+        //   window.location.reload();
         }
       });
     };
