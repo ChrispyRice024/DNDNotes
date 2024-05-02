@@ -117,7 +117,7 @@ export default function WorkPad() {
             ></textarea>
         </p>
         {/* Submit */}
-        <button onClick={handleSubmit}>New Note</button>
+        <input src='scroll_submit.png' type='image' id='submit' onClick={handleSubmit} />
       </form>
     </div>
   );

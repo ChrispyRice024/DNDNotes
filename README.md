@@ -1,70 +1,79 @@
-# Getting Started with Create NW.js React App
+# Dungeons & Dragons Notes Application
 
-This project was bootstrapped with [Create NW.js React App](https://github.com/naviapps/create-nw-react-app).
+This application allows users to create, edit, search, and manage notes related to Dungeons & Dragons (D&D) content. It provides features for organizing notes based on categories, searching by name or keywords, editing existing notes, and more.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Clone the repository to your local machine:
+   ```bash
+   git clone https://github.com/yourusername/dnd-notes.git
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. Navigate to the project directory:
+    ```bash
+    cd dnd-notes
 
-### `npm test`
+3. Install dependencies:
+    ```bash
+    npm install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. Start the development server:
+    ```bash
+    npm start
 
-### `npm run build`
+## Usage
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Create new notes by filling out the form with category, name, and note details, then click "Submit".
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Edit existing notes by clicking the "Edit" button, making changes, and confirming the changes.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Search for notes by category, name, or keywords using the search functionality.
 
-### `npm run eject`
+- Delete notes by clicking the "Delete" button next to each note.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Features
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Create new notes with category, name, and note details.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Edit existing notes with updated information.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Search for notes based on category, name, or keywords.
 
-## Learn More
+- Delete unwanted notes from the collection.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Planned Features
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Server capabilities allowing users to share notes wirelessly.
 
-### Code Splitting
+- Inclusion of the D&D API to get creature and item stats and descriptions.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- I plan to convert the finished file to a .apk for use on Android devices.
 
-### Analyzing the Bundle Size
+## Technologies Used
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- React: JavaScript library for building user interfaces.
 
-### Making a Progressive Web App
+- Node.js: JavaScript runtime for server-side development.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- fs (File System): Node.js module for interacting with the file system.
 
-### Advanced Configuration
+- TypeScript: Superset of JavaScript with static typing.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- HTML/CSS: Markup and styling for the user interface.
 
-### Deployment
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- Chistopher Dirksen
 
-### `npm run build` fails to minify
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License.
+

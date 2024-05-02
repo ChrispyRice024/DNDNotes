@@ -1,27 +1,52 @@
+*{
+  font-family: "MedievalSharp";
+  font-weight: 600;
+  font-style: normal;
+}
+
 #form{
   text-align:center;
-
 }
 #new-note{
   text-align:center;
   /* background-color:blue */
+
 }
 #workPad{
   max-width:100%;
   border-style:solid;
-  background-color:green;
+  background: url(parchment.png);
   /* display: flex; */
   text-align:center;
 }
 
-#searchParent{
-  
+#category{
+  background-color: rgba(255, 255, 255, 0.5)
+}
+
+#name{
+  background-color: rgba(255, 255, 255, 0.5)
+}
+
+#details{
+  background-color: rgba(255, 255, 255, 0.5);
+  max-width: 98%;
+}
+
+#submit{
+  max-height:30px;
+  filter: brightness(80%);
 }
 
 #search{
   text-align:center;
+  background:url(old_leather.png);
+  background-size:cover;
+  background-position:center;
 }
 
-input{
-  /* background-color:blue; */
+.singleNote{
+  font-size:13px;
+  background:url(scroll_texture.png);
+  padding: 7px
 }
